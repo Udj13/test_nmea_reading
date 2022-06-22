@@ -4,6 +4,7 @@ import 'bluetooth.dart';
 import 'widget_scan_result_tile.dart';
 import 'widget_connected_device_tile.dart';
 import 'screen_device.dart';
+import 'model.dart';
 
 class FindDevicesScreen extends StatelessWidget {
   const FindDevicesScreen({Key? key}) : super(key: key);
@@ -44,6 +45,7 @@ class FindDevicesScreen extends StatelessWidget {
                             r.device.discoverServices();
                             print('open device');
                             startBluetoothListener(r.device);
+                            startNMEAListen();
                             return DeviceScreen(device: r.device);
                           })),
                         ),

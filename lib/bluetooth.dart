@@ -1,14 +1,15 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'model.dart';
 
 void startBluetoothListener(BluetoothDevice device) {
   try {
-    print('Start listening --------------------------------------------------');
+    //print('Start listening --------------------------------------------------');
     device.services.listen((services) {
-      print('services.listen: ${services}');
+      //print('services.listen: ${services}');
       BluetoothService? agloraService;
       services.forEach((service) {
-        print('service: ${service.uuid.toString()}');
+        //print('service: ${service.uuid.toString()}');
         if (service.uuid.toString().startsWith("0000ffa2") ||
             service.uuid.toString().startsWith("0000ffe0")) {
           agloraService = service;
@@ -19,13 +20,13 @@ void startBluetoothListener(BluetoothDevice device) {
         var characteristics = agloraService!.characteristics;
         for (BluetoothCharacteristic c in characteristics) {
           if (c.uuid.toString().startsWith("0000ffe1")) {
-            print('========================= 0000ffe1 ======================');
+            //print('========================= 0000ffe1 ======================');
             c.setNotifyValue(true);
             c.read();
             c.descriptors.forEach((descriptor) {
-              print('Descriptor ${descriptor.uuid}: ${descriptor.value}');
+              //print('Descriptor ${descriptor.uuid}: ${descriptor.value}');
               descriptor.value.listen((value) {
-                print('New value: ${descriptor.uuid} = ${value}');
+                //print('New value: ${descriptor.uuid} = ${value}');
               });
             });
 
@@ -38,7 +39,7 @@ void startBluetoothListener(BluetoothDevice device) {
       }
     });
   } catch (e) {
-    print(e);
+    if (kDebugMode) print(e);
   }
   ;
 }

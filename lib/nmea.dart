@@ -1,69 +1,114 @@
 import 'package:flutter/foundation.dart';
+import 'dart:async';
 
-String _nmeaBuffer = '';
+class MinimumNavDATA {
+  double? latitude;
+  double? longitude;
+  double? speed;
+  double? course;
+  bool warning = true;
 
-void easyNMEAParser({required String nmeaData}) {
-  final double _latitude;
-  final double _longitude;
-
-  _nmeaBuffer += nmeaData;
-  print('===================================================================');
-//  if (kDebugMode) print('nmeaBuffer: $_nmeaBuffer');
-
-  List<String> splittedNMEA = _nmeaBuffer.split(r'$');
-//  print('splittedNMEA: $splittedNMEA');
-
-  while (splittedNMEA.length > 1) {
-    print('-----------------------------------------');
-
-    _parseSingleNMEAPacket(splittedNMEA.first);
-    _nmeaBuffer = _nmeaBuffer.substring(splittedNMEA[0].length - 1);
-    splittedNMEA.removeAt(0);
-
-    print('splittedNMEA length: ${splittedNMEA.length}');
-    print('nmeaBuffer length: ${_nmeaBuffer.length}');
-  }
-
-//  print('splittedNMEA: ${splittedNMEA.length}');
-//  print('nmeaBuffer: ${_nmeaBuffer}');
-
-  _latitude = 0.0;
-  _longitude = 0.0;
+  MinimumNavDATA(
+    this.latitude,
+    this.longitude,
+    this.speed,
+    this.course,
+    this.warning,
+  );
 }
 
-void _parseSingleNMEAPacket(String nmea) {
-  const headerPosition = 0;
-  const latituderPosition = 1;
-  const longituderPosition = 3;
-  const speedPosition = 7;
-  const headingPosition = 8;
+class NMEAParser {
+  var _nmeaStreamController = StreamController<MinimumNavDATA>.broadcast();
+  Stream<MinimumNavDATA> get nmeaDataStream => _nmeaStreamController.stream;
 
-  print(nmea);
+  String _nmeaBuffer = '';
+  String _previousNMEAPacket = '';
 
-  var splitNMEAString = nmea.split(',');
+  void parse({required String nmeaData}) {
+    if (nmeaData != _previousNMEAPacket) {
+      _previousNMEAPacket = nmeaData;
+      _nmeaBuffer += nmeaData;
+    }
 
-  if (checkNMEACRC(splitNMEAString)) {
-    if (splitNMEAString[headerPosition] == 'GPRMC') {
-      final latitude = splitNMEAString[latituderPosition];
-      final longitude = splitNMEAString[longituderPosition];
-      final speed = splitNMEAString[speedPosition];
-      final heading = splitNMEAString[headingPosition];
-      print(
-          'Navigation data: $latitude, $longitude, speed: $speed, heading: $heading');
+    final int indexOfLastS = _nmeaBuffer.lastIndexOf(r'$');
+
+    if (indexOfLastS > 0) {
+      final String dataForParsing = _nmeaBuffer.substring(1, indexOfLastS);
+      List<String> splittedNMEA = dataForParsing.split(r'$');
+      while (splittedNMEA.isNotEmpty) {
+        _parseSingleNMEAPacket(splittedNMEA.first);
+        splittedNMEA.removeAt(0);
+      }
+    }
+
+    _nmeaBuffer = _nmeaBuffer.substring(indexOfLastS); //end of line
+  }
+
+  void _parseSingleNMEAPacket(String nmea) {
+    print('Start parsing: $nmea');
+
+    var splitNMEAString = nmea.split(',');
+
+    if (_checkNMEACRC(nmea)) {
+      //RMC - Recommended minimum specific GPS/Transit data
+      //GPRMC - GPS
+      //GNRMC - GLONASS + GPS
+      //GLRMC - GLONASS
+      if (splitNMEAString[0].contains('RMC')) {
+        try {
+          final bool warning = (splitNMEAString[2] != 'A');
+
+          final newNavData;
+
+          if (!warning) {
+            final double latitude = double.tryParse(splitNMEAString[3]) ?? 0.0;
+            final longitude = double.tryParse(splitNMEAString[5]) ?? 0.0;
+            final speed = double.tryParse(splitNMEAString[7]) ?? 0.0;
+            final course = double.tryParse(splitNMEAString[8]) ?? 0.0;
+            newNavData = MinimumNavDATA(
+              latitude / 100,
+              longitude / 100,
+              speed * 1.852,
+              course,
+              warning,
+            );
+          } else {
+            newNavData = MinimumNavDATA(0, 0, 0, 0, true);
+          }
+
+          _nmeaStreamController.add(newNavData);
+
+          // if (kDebugMode)
+          //   print('NMEA data: lat ${newNavData.latitude}, '
+          //       'lon ${newNavData.longitude}, '
+          //       'speed ${newNavData.speed} km/h, '
+          //       'course ${newNavData.course}');
+        } catch (e) {
+          if (kDebugMode)
+            print('error parsing nav data in _parseSingleNMEAPacket: $e');
+        }
+      }
     }
   }
-}
 
-bool checkNMEACRC(List<String> splitNMEAString) {
-  final String checkSumOriginal = splitNMEAString.last.substring(1);
-  splitNMEAString.removeLast();
-  int crc = 0;
-  for (var word in splitNMEAString) {
-    List<int> bytes = word.codeUnits;
-    for (var b in bytes) {
-      crc ^= b;
+  bool _checkNMEACRC(String nmea) {
+    try {
+      final String checkSumOriginal =
+          nmea.split('*').last.toString().replaceAll("\r\n", "").toUpperCase();
+      nmea = nmea.substring(0, nmea.indexOf('*'));
+
+      int crc = 0;
+      List<int> bytes = nmea.codeUnits;
+      for (var b in bytes) {
+        crc ^= b;
+      }
+
+      final String checkSumCalculated = crc.toRadixString(16).toUpperCase();
+      final result = (checkSumOriginal == checkSumCalculated);
+      return result;
+    } catch (e) {
+      if (kDebugMode) print('error in nmea.dart / checkNMEACRC func: $e');
     }
+    return false;
   }
-  final String checkSumCalculated = crc.toRadixString(16);
-  return (checkSumOriginal == checkSumCalculated);
 }
