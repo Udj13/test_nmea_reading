@@ -21,14 +21,21 @@ class MinimumNavDATA {
   );
 }
 
-class NMEAParser {
+class NMEAParser
+
+/// NMEA parser
+
+{
   var _nmeaStreamController = StreamController<MinimumNavDATA>.broadcast();
   Stream<MinimumNavDATA> get nmeaDataStream => _nmeaStreamController.stream;
 
   String _nmeaBuffer = '';
   String _previousNMEAPacket = '';
 
-  void parse({required String nmeaData}) {
+  void parse({required String nmeaData})
+
+  /// Parse stream of NMEA data. Built-in buffer
+  {
     if (nmeaData != _previousNMEAPacket) {
       _previousNMEAPacket = nmeaData;
       _nmeaBuffer += nmeaData;
@@ -48,16 +55,18 @@ class NMEAParser {
     _nmeaBuffer = _nmeaBuffer.substring(indexOfLastS); //end of line
   }
 
-  void _parseSingleNMEAPacket(String nmea) {
-    print('Start parsing: $nmea');
+  void _parseSingleNMEAPacket(String nmea)
+
+  ///Parse RMC - Recommended minimum specific GPS/Transit data
+  //GPRMC = GPS,
+  //GNRMC = GLONASS + GPS,
+  //GLRMC = GLONASS
+  {
+    if (kDebugMode) print('Start parsing: $nmea');
 
     var splitNMEAString = nmea.split(',');
 
     if (_checkNMEACRC(nmea)) {
-      //RMC - Recommended minimum specific GPS/Transit data
-      //GPRMC - GPS
-      //GNRMC - GLONASS + GPS
-      //GLRMC - GLONASS
       if (splitNMEAString[0].contains('RMC')) {
         try {
           final bool warning = (splitNMEAString[2] != 'A');
@@ -85,14 +94,7 @@ class NMEAParser {
           } else {
             newNavData = MinimumNavDATA(0, 0, 0, 0, true);
           }
-
           _nmeaStreamController.add(newNavData);
-
-          // if (kDebugMode)
-          //   print('NMEA data: lat ${newNavData.latitude}, '
-          //       'lon ${newNavData.longitude}, '
-          //       'speed ${newNavData.speed} km/h, '
-          //       'course ${newNavData.course}');
         } catch (e) {
           if (kDebugMode)
             print('error parsing nav data in _parseSingleNMEAPacket: $e');
@@ -125,13 +127,14 @@ class NMEAParser {
   double _nmeaToDecimalDegrees(String nmeaPos, String quadrant)
 
   ///    Convert NMEA absolute position to decimal degrees
-  ///    "ddmm.mmmm" or "dddmm.mmmm" really is D+M/60,
-  ///    then negated if quadrant is 'W' or 'S'
+  //    "ddmm.mmmm" or "dddmm.mmmm" really is D+M/60,
+  //    then negated if quadrant is 'W' or 'S'
   {
     int digitCount = (nmeaPos[4] == '.' ? 2 : 3);
     int integerPart = int.tryParse(nmeaPos.substring(0, digitCount)) ?? 0;
-    double nmeaDouble = double.tryParse(nmeaPos) ?? 00;
+    double nmeaDouble = double.tryParse(nmeaPos) ?? 0.0;
     nmeaDouble -= integerPart * 100;
+    if (nmeaDouble.isNegative) return 0.0; // check error
     double result = integerPart + (nmeaDouble / 60);
     if (quadrant == 'W' || quadrant == 'S') result *= -1;
     return result;
