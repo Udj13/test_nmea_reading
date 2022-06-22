@@ -1,5 +1,9 @@
+import 'dart:ffi';
+
 import 'package:flutter/foundation.dart';
 import 'dart:async';
+
+import 'package:test_nmea_reading/model.dart';
 
 class MinimumNavDATA {
   double? latitude;
@@ -61,13 +65,19 @@ class NMEAParser {
           final newNavData;
 
           if (!warning) {
-            final double latitude = double.tryParse(splitNMEAString[3]) ?? 0.0;
-            final longitude = double.tryParse(splitNMEAString[5]) ?? 0.0;
+            final double latitude = _nmeaToDecimalDegrees(
+              splitNMEAString[3],
+              splitNMEAString[4],
+            );
+            final longitude = _nmeaToDecimalDegrees(
+              splitNMEAString[5],
+              splitNMEAString[6],
+            );
             final speed = double.tryParse(splitNMEAString[7]) ?? 0.0;
             final course = double.tryParse(splitNMEAString[8]) ?? 0.0;
             newNavData = MinimumNavDATA(
-              latitude / 100,
-              longitude / 100,
+              latitude,
+              longitude,
               speed * 1.852,
               course,
               warning,
@@ -110,5 +120,20 @@ class NMEAParser {
       if (kDebugMode) print('error in nmea.dart / checkNMEACRC func: $e');
     }
     return false;
+  }
+
+  double _nmeaToDecimalDegrees(String nmeaPos, String quadrant)
+
+  ///    Convert NMEA absolute position to decimal degrees
+  ///    "ddmm.mmmm" or "dddmm.mmmm" really is D+M/60,
+  ///    then negated if quadrant is 'W' or 'S'
+  {
+    int digitCount = (nmeaPos[4] == '.' ? 2 : 3);
+    int integerPart = int.tryParse(nmeaPos.substring(0, digitCount)) ?? 0;
+    double nmeaDouble = double.tryParse(nmeaPos) ?? 00;
+    nmeaDouble -= integerPart * 100;
+    double result = integerPart + (nmeaDouble / 60);
+    if (quadrant == 'W' || quadrant == 'S') result *= -1;
+    return result;
   }
 }
