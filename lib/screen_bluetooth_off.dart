@@ -35,15 +35,15 @@ class BluetoothOffScreen extends StatelessWidget {
                   .subtitle2
                   ?.copyWith(color: Colors.white),
             ),
-            SizedBox(
+            const SizedBox(
               height: 30,
             ),
-            Icon(
+            const Icon(
               Icons.bluetooth_disabled,
               size: 100.0,
               color: Colors.white54,
             ),
-            SizedBox(
+            const SizedBox(
               height: 30,
             ),
             Text(

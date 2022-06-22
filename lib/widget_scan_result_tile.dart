@@ -9,20 +9,20 @@ class ScanResultTile extends StatelessWidget {
   final VoidCallback? onTap;
 
   Widget _buildTitle(BuildContext context) {
-    if (result.device.name.length > 0) {
+    if (result.device.name.isNotEmpty) {
       return Text(
         result.device.name,
         overflow: TextOverflow.ellipsis,
       );
     } else {
-      return Text('noname device');
+      return const Text('noname device');
     }
   }
 
   Icon getIconsFromRSSI(int rssi) {
-    if (rssi >= -80) return Icon(Icons.signal_cellular_null);
-    if (rssi >= -70) return Icon(Icons.signal_cellular_4_bar);
-    return Icon(Icons.network_cell_outlined);
+    if (rssi >= -80) return const Icon(Icons.signal_cellular_null);
+    if (rssi >= -70) return const Icon(Icons.signal_cellular_4_bar);
+    return const Icon(Icons.network_cell_outlined);
   }
 
   @override
@@ -31,8 +31,8 @@ class ScanResultTile extends StatelessWidget {
       title: _buildTitle(context),
       leading: getIconsFromRSSI(result.rssi),
       trailing: ElevatedButton(
-        child: Text('Connect'),
         onPressed: (result.advertisementData.connectable) ? onTap : null,
+        child: const Text('Connect'),
       ),
     );
   }

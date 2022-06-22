@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'bluetooth.dart';
@@ -13,19 +14,19 @@ class FindDevicesScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Find AGLORA tracker'),
+        title: const Text('Find BLE device'),
 //        backgroundColor: Colors.purple,
       ),
       body: RefreshIndicator(
-        onRefresh: () =>
-            FlutterBluePlus.instance.startScan(timeout: Duration(seconds: 4)),
+        onRefresh: () => FlutterBluePlus.instance
+            .startScan(timeout: const Duration(seconds: 4)),
         child: SingleChildScrollView(
           child: Column(
             children: <Widget>[
               StreamBuilder<List<BluetoothDevice>>(
-                  stream: Stream.periodic(Duration(seconds: 2)).asyncMap(
+                  stream: Stream.periodic(const Duration(seconds: 2)).asyncMap(
                       (_) => FlutterBluePlus.instance.connectedDevices),
-                  initialData: [],
+                  initialData: const [],
                   builder: (c, snapshot) => Column(
                         children: snapshot.data!
                             .map((d) => ConnectedDeviceTile(d: d))
@@ -33,7 +34,7 @@ class FindDevicesScreen extends StatelessWidget {
                       )),
               StreamBuilder<List<ScanResult>>(
                 stream: FlutterBluePlus.instance.scanResults,
-                initialData: [],
+                initialData: const [],
                 builder: (c, snapshot) => Column(
                   children: snapshot.data!
                       .map(
@@ -43,7 +44,9 @@ class FindDevicesScreen extends StatelessWidget {
                               .push(MaterialPageRoute(builder: (context) {
                             r.device.connect();
                             r.device.discoverServices();
-                            print('open device');
+                            if (kDebugMode) {
+                              print('open device');
+                            }
                             startBluetoothListener(r.device);
                             startNMEAListen();
                             return DeviceScreen(device: r.device);
@@ -63,15 +66,15 @@ class FindDevicesScreen extends StatelessWidget {
         builder: (c, snapshot) {
           if (snapshot.data!) {
             return FloatingActionButton(
-              child: Icon(Icons.stop),
               onPressed: () => FlutterBluePlus.instance.stopScan(),
               backgroundColor: Colors.red.shade100,
+              child: const Icon(Icons.stop),
             );
           } else {
             return FloatingActionButton(
-                child: Icon(Icons.search),
+                child: const Icon(Icons.search),
                 onPressed: () => FlutterBluePlus.instance
-                    .startScan(timeout: Duration(seconds: 4)));
+                    .startScan(timeout: const Duration(seconds: 4)));
           }
         },
       ),

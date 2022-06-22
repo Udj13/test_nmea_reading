@@ -4,10 +4,12 @@ import 'screen_find_devices.dart';
 import 'screen_bluetooth_off.dart';
 
 void main() {
-  runApp(TestNMEAReadApp());
+  runApp(const TestNMEAReadApp());
 }
 
 class TestNMEAReadApp extends StatelessWidget {
+  const TestNMEAReadApp({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -18,7 +20,7 @@ class TestNMEAReadApp extends StatelessWidget {
           builder: (c, snapshot) {
             final state = snapshot.data;
             if (state == BluetoothState.on) {
-              return FindDevicesScreen();
+              return const FindDevicesScreen();
 //              return DeviceDemoScreen();
             }
             return BluetoothOffScreen(state: state);

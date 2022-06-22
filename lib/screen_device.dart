@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
-
 import 'package:flutter/cupertino.dart';
-
+import 'package:test_nmea_reading/model.dart';
 import 'bluetooth.dart';
+import 'nmea.dart';
 
 class DeviceScreen extends StatelessWidget {
   const DeviceScreen({Key? key, required this.device}) : super(key: key);
@@ -45,11 +45,18 @@ class DeviceScreen extends StatelessWidget {
                 }
                 return Row(
                   children: [
+                    IconButton(
+                      onPressed: () {
+                        startBluetoothListener(device);
+                        startNMEAListen();
+                      },
+                      icon: const Icon(Icons.restart_alt),
+                    ),
                     OutlinedButton(
                         onPressed: onPressed,
                         style: OutlinedButton.styleFrom(
                           primary: Colors.white,
-                          side: BorderSide(color: Colors.white, width: 1),
+                          side: const BorderSide(color: Colors.white, width: 1),
                         ),
                         child: Text(
                           text,
@@ -58,9 +65,9 @@ class DeviceScreen extends StatelessWidget {
                               .button
                               ?.copyWith(color: Colors.white),
                         )),
-                    SizedBox(width: 10),
-                    bluetoothStatusIcon(device: device),
-                    SizedBox(width: 10),
+                    const SizedBox(width: 10),
+                    BluetoothStatusIcon(device: device),
+                    const SizedBox(width: 10),
                   ],
                 );
               },
@@ -68,19 +75,44 @@ class DeviceScreen extends StatelessWidget {
           ],
         ),
         body: SingleChildScrollView(
-          child: Column(
-            children: [],
-          ),
-        ),
-        bottomNavigationBar: BottomAppBar(
+            child: StreamBuilder<MinimumNavDATA>(
+                stream: nmea.nmeaDataStream,
+                builder: (c, snapshot) => Expanded(
+                      child: Container(
+                        padding: const EdgeInsets.all(12),
+                        alignment: Alignment.center,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            const Text('latitude',
+                                style: TextStyle(color: Colors.grey)),
+                            Text(snapshot.data?.latitude?.toStringAsFixed(6) ??
+                                ''),
+                            const Text('longitude',
+                                style: TextStyle(color: Colors.grey)),
+                            Text(snapshot.data?.longitude?.toStringAsFixed(6) ??
+                                ''),
+                            const Text('speed',
+                                style: TextStyle(color: Colors.grey)),
+                            Text(
+                                snapshot.data?.speed?.toStringAsFixed(1) ?? ''),
+                            const Text('course',
+                                style: TextStyle(color: Colors.grey)),
+                            Text(snapshot.data?.course?.toStringAsFixed(0) ??
+                                ''),
+                          ],
+                        ),
+                      ),
+                    ))),
+        bottomNavigationBar: const BottomAppBar(
           color: Colors.white,
           child: null,
         ));
   }
 }
 
-class discoveringServicesIcon extends StatelessWidget {
-  const discoveringServicesIcon({
+class DiscoveringServicesIcon extends StatelessWidget {
+  const DiscoveringServicesIcon({
     Key? key,
     required this.device,
   }) : super(key: key);
@@ -94,14 +126,14 @@ class discoveringServicesIcon extends StatelessWidget {
       initialData: false,
       builder: (c, snapshot) => IndexedStack(
         index: snapshot.data! ? 1 : 0,
-        children: <Widget>[
+        children: const [
           Icon(Icons.account_tree),
           SizedBox(
+            width: 18.0,
+            height: 18.0,
             child: CircularProgressIndicator(
               valueColor: AlwaysStoppedAnimation(Colors.grey),
             ),
-            width: 18.0,
-            height: 18.0,
           ),
         ],
       ),
@@ -109,8 +141,8 @@ class discoveringServicesIcon extends StatelessWidget {
   }
 }
 
-class bluetoothStatusIcon extends StatelessWidget {
-  const bluetoothStatusIcon({
+class BluetoothStatusIcon extends StatelessWidget {
+  const BluetoothStatusIcon({
     Key? key,
     required this.device,
   }) : super(key: key);
@@ -126,7 +158,7 @@ class bluetoothStatusIcon extends StatelessWidget {
           (snapshot.data == BluetoothDeviceState.connected)
               ? Icon(CupertinoIcons.bluetooth,
                   color: Colors.lightGreenAccent.shade100)
-              : Icon(Icons.bluetooth_disabled, color: Colors.redAccent),
+              : const Icon(Icons.bluetooth_disabled, color: Colors.redAccent),
     );
   }
 }

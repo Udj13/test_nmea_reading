@@ -1,9 +1,5 @@
-import 'dart:ffi';
-
 import 'package:flutter/foundation.dart';
 import 'dart:async';
-
-import 'package:test_nmea_reading/model.dart';
 
 class MinimumNavDATA {
   double? latitude;
@@ -26,7 +22,7 @@ class NMEAParser
 /// NMEA parser
 
 {
-  var _nmeaStreamController = StreamController<MinimumNavDATA>.broadcast();
+  final _nmeaStreamController = StreamController<MinimumNavDATA>.broadcast();
   Stream<MinimumNavDATA> get nmeaDataStream => _nmeaStreamController.stream;
 
   String _nmeaBuffer = '';
@@ -71,7 +67,7 @@ class NMEAParser
         try {
           final bool warning = (splitNMEAString[2] != 'A');
 
-          final newNavData;
+          final MinimumNavDATA newNavData;
 
           if (!warning) {
             final double latitude = _nmeaToDecimalDegrees(
@@ -94,10 +90,12 @@ class NMEAParser
           } else {
             newNavData = MinimumNavDATA(0, 0, 0, 0, true);
           }
+
           _nmeaStreamController.add(newNavData);
         } catch (e) {
-          if (kDebugMode)
+          if (kDebugMode) {
             print('error parsing nav data in _parseSingleNMEAPacket: $e');
+          }
         }
       }
     }

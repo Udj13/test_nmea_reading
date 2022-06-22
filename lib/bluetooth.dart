@@ -8,27 +8,27 @@ void startBluetoothListener(BluetoothDevice device) {
     device.services.listen((services) {
       //print('services.listen: ${services}');
       BluetoothService? agloraService;
-      services.forEach((service) {
+      for (var service in services) {
         //print('service: ${service.uuid.toString()}');
         if (service.uuid.toString().startsWith("0000ffa2") ||
             service.uuid.toString().startsWith("0000ffe0")) {
           agloraService = service;
         }
-      });
+      }
 
       if (agloraService != null) {
-        var characteristics = agloraService!.characteristics;
+        var characteristics = agloraService.characteristics;
         for (BluetoothCharacteristic c in characteristics) {
           if (c.uuid.toString().startsWith("0000ffe1")) {
             //print('========================= 0000ffe1 ======================');
             c.setNotifyValue(true);
             c.read();
-            c.descriptors.forEach((descriptor) {
+            for (var descriptor in c.descriptors) {
               //print('Descriptor ${descriptor.uuid}: ${descriptor.value}');
               descriptor.value.listen((value) {
                 //print('New value: ${descriptor.uuid} = ${value}');
               });
-            });
+            }
 
             c.onValueChangedStream.listen((value) {
               //print('NEW VALUE');
@@ -41,5 +41,4 @@ void startBluetoothListener(BluetoothDevice device) {
   } catch (e) {
     if (kDebugMode) print(e);
   }
-  ;
 }
