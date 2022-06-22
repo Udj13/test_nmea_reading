@@ -4,10 +4,10 @@ import 'screen_find_devices.dart';
 import 'screen_bluetooth_off.dart';
 
 void main() {
-  runApp(AGLoRaApp());
+  runApp(TestNMEAReadApp());
 }
 
-class AGLoRaApp extends StatelessWidget {
+class TestNMEAReadApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
