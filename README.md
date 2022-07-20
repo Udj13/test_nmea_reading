@@ -6,7 +6,7 @@ Flutter app (iOs+Android) for test ble gps nmea reading
 
 Bluetooth NMEA receiver + tiny nmea dart parser
 
-Tested with AT-09 (HM-10) BLE module
+Tested with AT-09 (HM-10, BT05, BT-05) BLE module
 
 ## screenshots
 
