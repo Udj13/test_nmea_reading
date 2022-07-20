@@ -8,6 +8,16 @@ Bluetooth NMEA receiver + tiny nmea dart parser
 
 Tested with AT-09 (HM-10, BT05, BT-05) BLE module
 
+## wiring
+
+VCC, GND - to power supplier
+
+GPS TX pin to Bluetooth RX pin
+
+That is all!
+
+![image](https://user-images.githubusercontent.com/54446451/179979692-d43671ce-96d3-4a9e-ae26-45b04fd2e891.png)
+
 ## screenshots
 
 ![photo1658317977](https://user-images.githubusercontent.com/54446451/179978690-d7123693-bac3-4c71-88da-a2354249647a.jpeg)
