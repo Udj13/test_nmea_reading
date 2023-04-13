@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'dart:async';
+import 'dart:convert';
 
 class MinimumNavDATA {
   double? latitude;
@@ -54,15 +55,20 @@ class NMEAParser
   void _parseSingleNMEAPacket(String nmea)
 
   ///Parse RMC - Recommended minimum specific GPS/Transit data
+  ///Parse GGA - Time, position, fix type data
+
   //GPRMC = GPS,
   //GNRMC = GLONASS + GPS,
   //GLRMC = GLONASS
   {
-    if (kDebugMode) print('Start parsing: $nmea');
+    debugPrint('Start parsing: $nmea');
 
     var splitNMEAString = nmea.split(',');
 
     if (_checkNMEACRC(nmea)) {
+      //RMC parser
+      // Example:
+      // GNRMC,075333.000,A,5411.13770,N,04513.59418,E,0.001,287.88,130423,,,A,U*32
       if (splitNMEAString[0].contains('RMC')) {
         try {
           final bool warning = (splitNMEAString[2] != 'A');
@@ -88,10 +94,50 @@ class NMEAParser
               warning,
             );
           } else {
-            newNavData = MinimumNavDATA(0, 0, 0, 0, true);
+            newNavData = MinimumNavDATA(0, 0, null, null, true);
           }
 
           _nmeaStreamController.add(newNavData);
+          debugPrint('New RMC coordinates! '
+              '${newNavData.latitude}, ${newNavData.longitude}');
+        } catch (e) {
+          if (kDebugMode) {
+            print('error parsing nav data in _parseSingleNMEAPacket: $e');
+          }
+        }
+      }
+
+      //GGA parser
+      //Example:
+      //GGA,075329.000,5411.13771,N,04513.59508,E,1,17,2.07,159.8,M,4.6,M,,*4C
+      //GGA,091354.000,5411.14073,N,04513.58031,E,1,18,1.80,149.8,M,4.6,M,,*42
+      if (splitNMEAString[0].contains('GGA')) {
+        try {
+          const warning = false;
+
+          final MinimumNavDATA newNavData;
+
+          if (!warning) {
+            final double latitude = _nmeaToDecimalDegrees(
+              splitNMEAString[2],
+              splitNMEAString[3],
+            );
+            final longitude = _nmeaToDecimalDegrees(
+              splitNMEAString[4],
+              splitNMEAString[5],
+            );
+
+            newNavData = MinimumNavDATA(
+              latitude,
+              longitude,
+              null, // instead of "speed * 1.852"
+              null, // course
+              warning,
+            );
+          }
+
+          _nmeaStreamController.add(newNavData);
+          debugPrint('New GGA coordinates!');
         } catch (e) {
           if (kDebugMode) {
             print('error parsing nav data in _parseSingleNMEAPacket: $e');

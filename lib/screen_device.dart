@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:test_nmea_reading/model.dart';
-import 'bluetooth.dart';
+import 'model.dart';
+import '../bluetooth.dart';
 import 'nmea.dart';
 
 class DeviceScreen extends StatelessWidget {
@@ -76,34 +76,27 @@ class DeviceScreen extends StatelessWidget {
         ),
         body: SingleChildScrollView(
             child: StreamBuilder<MinimumNavDATA>(
-                stream: nmea.nmeaDataStream,
-                builder: (c, snapshot) => Expanded(
-                      child: Container(
-                        padding: const EdgeInsets.all(12),
-                        alignment: Alignment.center,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            const Text('latitude',
-                                style: TextStyle(color: Colors.grey)),
-                            Text(snapshot.data?.latitude?.toStringAsFixed(6) ??
-                                ''),
-                            const Text('longitude',
-                                style: TextStyle(color: Colors.grey)),
-                            Text(snapshot.data?.longitude?.toStringAsFixed(6) ??
-                                ''),
-                            const Text('speed',
-                                style: TextStyle(color: Colors.grey)),
-                            Text(
-                                snapshot.data?.speed?.toStringAsFixed(1) ?? ''),
-                            const Text('course',
-                                style: TextStyle(color: Colors.grey)),
-                            Text(snapshot.data?.course?.toStringAsFixed(0) ??
-                                ''),
-                          ],
-                        ),
-                      ),
-                    ))),
+          stream: nmea.nmeaDataStream,
+          builder: (c, snapshot) => Container(
+            padding: const EdgeInsets.all(12),
+            alignment: Alignment.center,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                const Text('latitude', style: TextStyle(color: Colors.grey)),
+                Text(snapshot.data?.latitude?.toStringAsFixed(6) ?? ''),
+                const Text('longitude', style: TextStyle(color: Colors.grey)),
+                Text(snapshot.data?.longitude?.toStringAsFixed(6) ?? ''),
+                const Text('speed', style: TextStyle(color: Colors.grey)),
+                Text(snapshot.data?.speed?.toStringAsFixed(1) ?? ''),
+                const Text('course', style: TextStyle(color: Colors.grey)),
+                Text(snapshot.data?.course?.toStringAsFixed(0) ?? ''),
+                const Text('update time', style: TextStyle(color: Colors.grey)),
+                Text(DateTime.now().toString().substring(0, 19) ?? ''),
+              ],
+            ),
+          ),
+        )),
         bottomNavigationBar: const BottomAppBar(
           color: Colors.white,
           child: null,

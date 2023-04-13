@@ -8,10 +8,8 @@ List<int> lastValue = [];
 
 void startNMEAListen() {
   nmea.nmeaDataStream.listen((event) {
-    if (kDebugMode) {
-      print(
-          'listener nmea stream: ${event.latitude}, ${event.longitude}, ${event.speed}, ${event.course}');
-    }
+    debugPrint(
+        'listener nmea stream: ${event.latitude}, ${event.longitude}, ${event.speed}, ${event.course}');
   });
 }
 
@@ -21,6 +19,7 @@ void newDataReceived(List<int> newValue) {
     for (var element in newValue) {
       rStr += String.fromCharCode(element);
     }
+    //print('newDataReceived, rStr=: $rStr');
 
     nmea.parse(nmeaData: rStr);
 

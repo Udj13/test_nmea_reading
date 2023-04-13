@@ -12,6 +12,7 @@ class TestNMEAReadApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    FlutterBluePlus.instance.setLogLevel(LogLevel.emergency);
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: StreamBuilder<BluetoothState>(

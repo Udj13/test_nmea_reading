@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.shlyagin.test_nmea_reading">
+    package="ru.shlyagin.test_nmea_reading_2">
    <application
-        android:label="test_nmea_reading"
+        android:label="test_nmea_reading_2"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
