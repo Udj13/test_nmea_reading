@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 
 import 'nmea.dart';
@@ -6,8 +8,12 @@ NMEAParser nmea = NMEAParser();
 
 List<int> lastValue = [];
 
+StreamSubscription<MinimumNavDATA>? nmeaSubscription;
+
 void startNMEAListen() {
-  nmea.nmeaDataStream.listen((event) {
+  if (nmeaSubscription != null) return;
+
+  nmeaSubscription = nmea.nmeaDataStream.listen((event) {
     debugPrint(
         'listener nmea stream: ${event.latitude}, ${event.longitude}, ${event.speed}, ${event.course}');
   });

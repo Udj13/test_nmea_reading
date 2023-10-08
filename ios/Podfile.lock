@@ -20,7 +20,7 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   Flutter: f04841e97a9d0b0a8025694d0796dd46242b2854
-  flutter_blue_plus: 5cb46a0d66c6cacebf7551e0e5a6bfa345ccc224
+  flutter_blue_plus: 4837da7d00cf5d441fdd6635b3a57f936778ea96
   permission_handler_apple: e76247795d700c14ea09e3a2d8855d41ee80a2e6
 
 PODFILE CHECKSUM: 35a148b5cd59ba9ff9b43a215506b95ad09fb130

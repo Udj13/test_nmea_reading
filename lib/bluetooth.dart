@@ -34,12 +34,18 @@ Future<void> startBluetoothListener(BluetoothDevice device) async {
             });
           }
 
-          c.onValueReceived.listen((value) {
+          final subscription = c.onValueReceived.listen((value) {
             print('NEW VALUE $value');
             try {
               newDataReceived(value);
             } catch (e) {
               print('Error in newDataReceived function');
+            }
+          });
+
+          device.connectionState.listen((BluetoothConnectionState state) {
+            if (state == BluetoothConnectionState.disconnected) {
+              subscription.cancel(); // must cancel!
             }
           });
         }

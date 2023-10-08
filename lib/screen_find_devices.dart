@@ -42,13 +42,8 @@ class FindDevicesScreen extends StatelessWidget {
                           result: r,
                           onTap: () => Navigator.of(context)
                               .push(MaterialPageRoute(builder: (context) {
-                            r.device.connect();
-                            r.device.discoverServices();
-                            if (kDebugMode) {
-                              print('open device');
-                            }
-                            startBluetoothListener(r.device);
-                            startNMEAListen();
+                            print("Connect in list pressed");
+                            openDevice(r.device);
                             return DeviceScreen(device: r.device);
                           })),
                         ),
@@ -80,4 +75,18 @@ class FindDevicesScreen extends StatelessWidget {
       ),
     );
   }
+}
+
+Future<void> openDevice(BluetoothDevice device) async {
+  print("open device func");
+  print(device);
+  try {
+    await device.connect();
+  } catch (error) {
+    print(error);
+  }
+  print('openDevice - device.connect passed');
+  print(device);
+  startBluetoothListener(device);
+  startNMEAListen();
 }

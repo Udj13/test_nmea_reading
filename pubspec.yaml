@@ -1,4 +1,4 @@
-name: test_nmea_reading_2
+name: test_nmea_reading
 description: test read NMEA via BLE connection
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
@@ -38,7 +38,7 @@ dependencies:
 
   # Bluetooth
   # https://pub.dev/packages/flutter_blue_plus/
-  flutter_blue_plus: ^1.16.4
+  flutter_blue_plus: ^1.16.10
 
 
   permission_handler: ^10.2.0

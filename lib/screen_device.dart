@@ -26,11 +26,12 @@ class DeviceScreen extends StatelessWidget {
                   case BluetoothConnectionState.connected:
                     onPressed = () => device.disconnect();
                     text = 'Disconnect';
-                    device.discoverServices();
+                    //device.discoverServices();
                     break;
                   case BluetoothConnectionState.disconnected:
                     onPressed = () async {
                       await device.connect();
+                      print(device);
                       print("Device connected");
                       startBluetoothListener(device);
                       startNMEAListen();
