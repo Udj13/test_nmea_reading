@@ -9,9 +9,9 @@ class ScanResultTile extends StatelessWidget {
   final VoidCallback? onTap;
 
   Widget _buildTitle(BuildContext context) {
-    if (result.device.name.isNotEmpty) {
+    if (result.device.platformName.isNotEmpty) {
       return Text(
-        result.device.name,
+        result.device.platformName,
         overflow: TextOverflow.ellipsis,
       );
     } else {

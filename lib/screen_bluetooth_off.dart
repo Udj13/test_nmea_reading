@@ -4,7 +4,7 @@ import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 class BluetoothOffScreen extends StatelessWidget {
   const BluetoothOffScreen({Key? key, this.state}) : super(key: key);
 
-  final BluetoothState? state;
+  final BluetoothAdapterState? state;
 
   @override
   Widget build(BuildContext context) {
@@ -18,21 +18,21 @@ class BluetoothOffScreen extends StatelessWidget {
               'AGLORA',
               style: Theme.of(context)
                   .primaryTextTheme
-                  .headline4
+                  .headlineMedium
                   ?.copyWith(color: Colors.white),
             ),
             Text(
               'Arduino/GPS/LORA',
               style: Theme.of(context)
                   .primaryTextTheme
-                  .subtitle2
+                  .titleSmall
                   ?.copyWith(color: Colors.white),
             ),
             Text(
               'Client for open-source tracker',
               style: Theme.of(context)
                   .primaryTextTheme
-                  .subtitle2
+                  .titleSmall
                   ?.copyWith(color: Colors.white),
             ),
             const SizedBox(
@@ -50,7 +50,7 @@ class BluetoothOffScreen extends StatelessWidget {
               'Bluetooth Adapter is ${state != null ? state.toString().substring(15) : 'not available'}.',
               style: Theme.of(context)
                   .primaryTextTheme
-                  .subtitle2
+                  .titleSmall
                   ?.copyWith(color: Colors.white),
             ),
           ],

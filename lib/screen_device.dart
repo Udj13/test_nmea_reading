@@ -16,26 +16,25 @@ class DeviceScreen extends StatelessWidget {
         appBar: AppBar(
           title: Text(device.name),
           actions: <Widget>[
-            StreamBuilder<BluetoothDeviceState>(
-              stream: device.state,
-              initialData: BluetoothDeviceState.connecting,
+            StreamBuilder<BluetoothConnectionState>(
+              stream: device.connectionState,
+              initialData: BluetoothConnectionState.disconnected,
               builder: (c, snapshot) {
                 VoidCallback? onPressed;
                 String text;
                 switch (snapshot.data) {
-                  case BluetoothDeviceState.connecting:
-                    text = 'waiting...';
-                    break;
-                  case BluetoothDeviceState.disconnecting:
-                    text = 'disconnecting...';
-                    break;
-                  case BluetoothDeviceState.connected:
+                  case BluetoothConnectionState.connected:
                     onPressed = () => device.disconnect();
                     text = 'Disconnect';
                     device.discoverServices();
                     break;
-                  case BluetoothDeviceState.disconnected:
-                    onPressed = () => device.connect();
+                  case BluetoothConnectionState.disconnected:
+                    onPressed = () async {
+                      await device.connect();
+                      print("Device connected");
+                      startBluetoothListener(device);
+                      startNMEAListen();
+                    };
                     text = 'Connect';
                     break;
                   default:
@@ -47,8 +46,7 @@ class DeviceScreen extends StatelessWidget {
                   children: [
                     IconButton(
                       onPressed: () {
-                        startBluetoothListener(device);
-                        startNMEAListen();
+                        print("button");
                       },
                       icon: const Icon(Icons.restart_alt),
                     ),
@@ -62,7 +60,7 @@ class DeviceScreen extends StatelessWidget {
                           text,
                           style: Theme.of(context)
                               .primaryTextTheme
-                              .button
+                              .labelLarge
                               ?.copyWith(color: Colors.white),
                         )),
                     const SizedBox(width: 10),
@@ -144,11 +142,11 @@ class BluetoothStatusIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<BluetoothDeviceState>(
-      stream: device.state,
-      initialData: BluetoothDeviceState.connecting,
+    return StreamBuilder<BluetoothConnectionState>(
+      stream: device.connectionState,
+      initialData: BluetoothConnectionState.disconnected,
       builder: (c, snapshot) =>
-          (snapshot.data == BluetoothDeviceState.connected)
+          (snapshot.data == BluetoothConnectionState.connected)
               ? Icon(CupertinoIcons.bluetooth,
                   color: Colors.lightGreenAccent.shade100)
               : const Icon(Icons.bluetooth_disabled, color: Colors.redAccent),

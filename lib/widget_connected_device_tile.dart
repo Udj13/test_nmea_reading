@@ -13,13 +13,13 @@ class ConnectedDeviceTile extends StatelessWidget {
       leading: const Icon(
         Icons.gps_fixed,
       ),
-      title: Text(d.name),
+      title: Text(d.platformName),
       subtitle: const Text('device connected'),
-      trailing: StreamBuilder<BluetoothDeviceState>(
-        stream: d.state,
-        initialData: BluetoothDeviceState.disconnected,
+      trailing: StreamBuilder<BluetoothConnectionState>(
+        stream: d.connectionState,
+        initialData: BluetoothConnectionState.disconnected,
         builder: (c, snapshot) {
-          if (snapshot.data == BluetoothDeviceState.connected) {
+          if (snapshot.data == BluetoothConnectionState.connected) {
             return ElevatedButton(
               child: const Text('Open'),
               onPressed: () => Navigator.of(context)
