@@ -25,7 +25,7 @@ void newDataReceived(List<int> newValue) {
     for (var element in newValue) {
       rStr += String.fromCharCode(element);
     }
-    //print('newDataReceived, rStr=: $rStr');
+    print('newDataReceived, rStr=: $rStr');
 
     nmea.parse(nmeaData: rStr);
 

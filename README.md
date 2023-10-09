@@ -1,25 +1,16 @@
-# test_nmea_reading
+# text_nmea_reading_3
 
-Flutter app (iOs+Android) for test ble gps nmea reading
+BLE nmea test - just for android build
 
-## what it is
+## Getting Started
 
-Bluetooth NMEA receiver + tiny nmea dart parser
+This project is a starting point for a Flutter application.
 
-Tested with AT-09 (HM-10, BT05, BT-05) BLE module
+A few resources to get you started if this is your first Flutter project:
 
-## wiring
+- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
+- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
 
-VCC, GND - to power supplier
-
-GPS TX pin to Bluetooth RX pin
-
-That is all!
-
-![image](https://user-images.githubusercontent.com/54446451/179979692-d43671ce-96d3-4a9e-ae26-45b04fd2e891.png)
-
-## screenshots
-
-![photo1658317977](https://user-images.githubusercontent.com/54446451/179978690-d7123693-bac3-4c71-88da-a2354249647a.jpeg)
-
-![photo1658317977 (1)](https://user-images.githubusercontent.com/54446451/179978701-52124319-19fd-4fc3-9bdc-35bbc2f56ee5.jpeg)
+For help getting started with Flutter development, view the
+[online documentation](https://docs.flutter.dev/), which offers tutorials,
+samples, guidance on mobile development, and a full API reference.

@@ -1,7 +1,7 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="ru.shlyagin.test_nmea_reading">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
     <!-- Tell Google Play Store that your app uses Bluetooth LE
-     Set android:required="true" if bluetooth is necessary -->
+ Set android:required="true" if bluetooth is necessary -->
     <uses-feature android:name="android.hardware.bluetooth_le" android:required="false" />
 
     <!-- New Bluetooth permissions in Android 12
@@ -16,8 +16,10 @@
 
     <!-- legacy for Android 9 or lower -->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" android:maxSdkVersion="28" />
-   <application
-        android:label="test_nmea_reading"
+
+
+    <application
+        android:label="text_nmea_reading_3"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

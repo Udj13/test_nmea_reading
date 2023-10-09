@@ -1,5 +1,5 @@
-name: test_nmea_reading
-description: test read NMEA via BLE connection
+name: text_nmea_reading_3
+description: BLE nmea test - just for android build
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
@@ -19,7 +19,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 version: 1.0.0+1
 
 environment:
-  sdk: '>=2.19.6 <3.0.0'
+  sdk: '>=3.1.3 <4.0.0'
 
 # Dependencies specify other packages that your package needs in order to work.
 # To automatically upgrade your package dependencies to the latest versions
@@ -42,7 +42,6 @@ dependencies:
 
 
   permission_handler: ^10.2.0
-
 
 dev_dependencies:
   flutter_test:
